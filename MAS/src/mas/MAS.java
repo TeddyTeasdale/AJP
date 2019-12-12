@@ -20,21 +20,52 @@ public class MAS {
     {
         
         Router router = new Router("Router1");
-        Portal portal = new Portal("Portal1",router);
-        MetaAgent user1 = new UserAgent("User1",portal);
-        MetaAgent user2 = new UserAgent("User2",portal);
+        Portal portal1 = new Portal("Portal1",router);
+        Portal portal2 = new Portal("Portal2",router);
+        MetaAgent user1 = new UserAgent("User1",portal1);
+        MetaAgent user2 = new UserAgent("User2",portal1);
+        MetaAgent user3 = new UserAgent("User3",portal2);
+        MetaAgent user4 = new UserAgent("User4",portal2);
         
-        portal.updateTable("User1", user1);
-        router.updateTable("User1", portal);
-        portal.updateTable("User2", user2);
-        router.updateTable("User2", portal);
+        portal1.updateTable(user1.userName, user1);
+        router.updateTable(user1.userName, portal1);
+        portal1.updateTable(user2.userName, user2);
+        router.updateTable(user2.userName, portal1);
+//        portal1.updateTable(user3.userName, user3);
+//        portal1.updateTable(user4.userName, user4);
         
-        System.out.println(router.routing.containsKey("User1"));
-        System.out.println(portal.routingTable.containsKey("User1"));
         
-        Message msg = new Message("User1", "Your nan is dead", "User2");
-        user2.messageHandler(msg);
-        user1.messageHandler(new Message("User2", "My nan is dead now", "User1"));
+        portal2.updateTable(user3.userName, user3);
+        router.updateTable(user3.userName, portal2);
+        portal2.updateTable(user4.userName, user4);
+        router.updateTable(user4.userName, portal2);
+//        portal2.updateTable(user1.userName, user1);
+//        portal2.updateTable(user2.userName, user2);
+        
+        
+        System.out.println(router.routing.containsKey(user1.userName));
+        System.out.println(portal1.routingTable.containsKey(user1.userName));
+        
+        System.out.println(router.routing.containsKey(user2.userName));
+        System.out.println(portal1.routingTable.containsKey(user2.userName));
+        
+        System.out.println(router.routing.containsKey(user3.userName));
+        System.out.println(portal2.routingTable.containsKey(user3.userName));
+        
+        System.out.println(router.routing.containsKey(user4.userName));
+        System.out.println(portal2.routingTable.containsKey(user4.userName));
+        
+        System.out.println(portal1.routingTable.containsKey("User2"));
+        System.out.println(portal2.routingTable.containsKey("User2"));
+        
+        
+        System.out.println("Portal1 HashMap: " + portal1.routingTable.toString());
+        System.out.println("Portal2 HashMap: " + portal2.routingTable.toString());
+        
+        
+        Message msg = new Message("User3", "Your nan is dead", "User1");
+        user1.messageHandler(msg);
+        
         
     }
     

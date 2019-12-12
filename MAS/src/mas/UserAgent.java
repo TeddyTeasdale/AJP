@@ -13,7 +13,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class UserAgent extends MetaAgent
 {
-    protected Portal userPortal;
+    protected static Portal userPortal;
 
     public UserAgent(String userName, Portal userPortal) 
     {
@@ -21,7 +21,11 @@ public class UserAgent extends MetaAgent
         this.userPortal = userPortal;
     }
 
-   
+    public Portal getUserPortal() {
+        return userPortal;
+    }
+
+    
     @Override
     public void messageHandler(Message message)
     {

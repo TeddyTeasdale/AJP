@@ -8,7 +8,6 @@ package mas;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 
 
 /**
@@ -17,7 +16,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class Router extends MetaAgent
 {
-    HashMap<String, MetaAgent> routing = new HashMap();
+    public volatile HashMap<String, MetaAgent> routing = new HashMap();
     
     public Router(String userName)
     {
@@ -26,28 +25,43 @@ public class Router extends MetaAgent
         
     }
     
-    public void updateTable(String userAgentName, MetaAgent portal)
+    public synchronized void updateTable(String userAgentName, MetaAgent portal)
     {
         routing.put(userAgentName, portal);
         synchroniseUpdate(userAgentName);
     }
     
-    public void synchroniseUpdate(String userAgentName)
+    public synchronized void synchroniseUpdate(String userAgentName)
     {
         Iterator mapRouting = routing.entrySet().iterator();
         
         while(mapRouting.hasNext())
         {
-           
+            System.out.println("Entered Routing While");
             Map.Entry routingElement = (Map.Entry)mapRouting.next();
             Portal p = (Portal)routingElement.getValue();
+            System.out.println(p.userName);
             p.updateTable(userAgentName, this);
         }
     }
 
     @Override
-    public void messageHandler(Message message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void messageHandler(Message message) 
+    {
+        if(routing.containsKey(message.getReceiver()))
+        {
+            try
+            {
+                System.out.println("Passed though router");
+                routing.get(message.getReceiver()).queue.put(message);
+            }catch(InterruptedException ie)
+            {
+                System.out.println("Error!");
+            }
+        }
+        else
+        {
+            System.out.println("Router: Message receiver doesn't exist!");
+        }
     }
-    
 }

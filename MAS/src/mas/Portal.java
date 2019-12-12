@@ -6,6 +6,8 @@
 package mas;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -15,7 +17,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class Portal extends MetaAgent
 {
     
-    public HashMap<String, MetaAgent> routingTable; 
+    public volatile HashMap<String, MetaAgent> routingTable; 
     private Router userRouter;
     
     public Portal( String userName, Router router)
@@ -28,11 +30,28 @@ public class Portal extends MetaAgent
     @Override
     public void messageHandler(Message message)
     {
+        System.out.println("Portal Contains Key: " + routingTable.containsKey(message.getReceiver()));
+        
         if(routingTable.containsKey(message.getReceiver()))
         {
             try
             {
+                /*Map.Entry routingElement;
+                Iterator mapRouting = routingTable.entrySet().iterator();
+        
+                while(mapRouting.hasNext())
+                {
+                    routingElement = (Map.Entry)mapRouting.next();
+                    MetaAgent meta = (MetaAgent)routingElement.getValue();
+                    if(meta.userName.equals(message.getReceiver()))
+                    {
+                        break;
+                    }
+                    
+                }*/
+                
                 routingTable.get(message.getReceiver()).queue.put(message);
+                
             }catch(InterruptedException ie)
             {
                 System.out.println("Error!");
@@ -40,17 +59,22 @@ public class Portal extends MetaAgent
         }
         else
         {
-            System.out.println("Message receiver doesn't exist!");
+            try
+            {
+                userRouter.queue.put(message);
+            }catch(InterruptedException ie)
+            {
+                System.out.println("Error!");
+            }
         }
     }
     
-    public void updateTable(String name ,MetaAgent p)
-    {
-        
-        if(!(this.routingTable.containsKey(name)))
+        public synchronized void updateTable(String name ,MetaAgent p)
         {
-            routingTable.put(p.userName, p);
-            
+            if(!this.routingTable.containsKey(name))
+            {
+                System.out.println("Entered Portal UpdateTable");
+                routingTable.put(name, p);
+            }
         }
-    }
 }
