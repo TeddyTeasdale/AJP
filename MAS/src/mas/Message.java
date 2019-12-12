@@ -36,6 +36,9 @@ public class Message
     {
         return sender;
     }
-    
+    public String toString()
+    {
+        return "Message from: " + sender + "\nMessage: " + messageBody + "\nTo: " + receiver;
+    }
     
 }

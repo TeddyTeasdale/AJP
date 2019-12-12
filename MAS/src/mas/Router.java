@@ -6,6 +6,8 @@
 package mas;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
 
@@ -15,17 +17,32 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class Router extends MetaAgent
 {
+    HashMap<String, MetaAgent> routing = new HashMap();
     
-    
-    public Router(String userName, ArrayBlockingQueue queue)
+    public Router(String userName)
     {
-        super(userName,queue);
+        
+        super(userName);
         
     }
     
-    public void updateTable(String n, MetaAgent g)
+    public void updateTable(String userAgentName, MetaAgent portal)
     {
+        routing.put(userAgentName, portal);
+        synchroniseUpdate(userAgentName);
+    }
+    
+    public void synchroniseUpdate(String userAgentName)
+    {
+        Iterator mapRouting = routing.entrySet().iterator();
         
+        while(mapRouting.hasNext())
+        {
+           
+            Map.Entry routingElement = (Map.Entry)mapRouting.next();
+            Portal p = (Portal)routingElement.getValue();
+            p.updateTable(userAgentName, this);
+        }
     }
 
     @Override

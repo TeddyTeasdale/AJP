@@ -15,12 +15,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class Portal extends MetaAgent
 {
     
-    private HashMap<String, MetaAgent> routingTable; 
+    public HashMap<String, MetaAgent> routingTable; 
     private Router userRouter;
     
-    public Portal( String userName, Portal userPortal, ArrayBlockingQueue queue, Router router)
+    public Portal( String userName, Router router)
     {
-        super(userName, userPortal, queue);
+        super(userName);
         this.routingTable = new HashMap();
         this.userRouter = router;
     }
@@ -28,14 +28,29 @@ public class Portal extends MetaAgent
     @Override
     public void messageHandler(Message message)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(routingTable.containsKey(message.getReceiver()))
+        {
+            try
+            {
+                routingTable.get(message.getReceiver()).queue.put(message);
+            }catch(InterruptedException ie)
+            {
+                System.out.println("Error!");
+            }
+        }
+        else
+        {
+            System.out.println("Message receiver doesn't exist!");
+        }
     }
     
-    public void updateTable(MetaAgent p)
+    public void updateTable(String name ,MetaAgent p)
     {
         
-        routingTable.put(p.userName, p);
-        this.userRouter.updateTable(userName, this);
-        
+        if(!(this.routingTable.containsKey(name)))
+        {
+            routingTable.put(p.userName, p);
+            
+        }
     }
 }

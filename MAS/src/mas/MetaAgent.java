@@ -14,26 +14,22 @@ import java.util.concurrent.ArrayBlockingQueue;
 public abstract class MetaAgent
 {
     protected String userName;
-    protected Portal userPortal;
+    
     protected ArrayBlockingQueue queue;
     private Thread t;
     private boolean exit;
 
-    public MetaAgent(String userName, Portal userPortal, ArrayBlockingQueue queue) 
+    public MetaAgent(String userName) 
     {
         this.userName = userName;
-        this.userPortal = userPortal;
-        this.queue = queue;
+        this.queue = new ArrayBlockingQueue(10);
         this.exit = false;
         startThread();
         
     }
-    public MetaAgent(String userName,ArrayBlockingQueue queue)
-    {
-        this.userName = userName;
-        this.queue = queue;
-        startThread();
-    }
+
+    
+    
 
     public void startThread() 
     {
@@ -66,9 +62,4 @@ public abstract class MetaAgent
     public abstract void messageHandler(Message message);
     
     
-    public void addToTable()
-    {
-        this.userPortal.updateTable(this);
-        
-    }
 }

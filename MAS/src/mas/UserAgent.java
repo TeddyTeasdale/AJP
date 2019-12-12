@@ -13,29 +13,31 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class UserAgent extends MetaAgent
 {
+    protected Portal userPortal;
 
-    public UserAgent(String userName, Portal userPortal, ArrayBlockingQueue queue) 
+    public UserAgent(String userName, Portal userPortal) 
     {
-        super(userName, userPortal, queue);
+        super(userName);
+        this.userPortal = userPortal;
     }
-    
-    
+
+   
     @Override
     public void messageHandler(Message message)
     {
         if(message.getReceiver().equals(this.userName))
         {
-            message.toString();
+            System.out.println(message.toString());
         }
         else
         {
             try
             {
-                this.userPortal.queue.put((Object)message);
+                this.userPortal.queue.put(message);
             }catch(InterruptedException ie)
             {
                 System.out.println("Error!");
-            }            
+            }
         }
     }
 }
