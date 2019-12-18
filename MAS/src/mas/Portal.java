@@ -6,9 +6,9 @@
 package mas;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,15 +16,26 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class Portal extends MetaAgent
 {
+    public volatile TreeMap<String, MetaAgent> routingTable; 
+    //private Router userRouter;
     
-    public volatile HashMap<String, MetaAgent> routingTable; 
-    private Router userRouter;
+    public Portal(String userName)
+    {
+        super(userName, null);
+        this.routingTable = new TreeMap<>();
+        //this.userRouter = router;
+    }
     
     public Portal( String userName, Router router)
     {
-        super(userName);
-        this.routingTable = new HashMap();
-        this.userRouter = router;
+        super(userName, null);
+        this.routingTable = new TreeMap<>();
+        //this.userRouter = router;
+    }
+    
+    public void setPortal(Portal portal)
+    {
+        this.portal = portal;
     }
     
     @Override
@@ -32,49 +43,37 @@ public class Portal extends MetaAgent
     {
         System.out.println("Portal Contains Key: " + routingTable.containsKey(message.getReceiver()));
         
-        if(routingTable.containsKey(message.getReceiver()))
+        if(message.getReceiver().equals(this.userName))
         {
-            try
-            {
-                /*Map.Entry routingElement;
-                Iterator mapRouting = routingTable.entrySet().iterator();
-        
-                while(mapRouting.hasNext())
-                {
-                    routingElement = (Map.Entry)mapRouting.next();
-                    MetaAgent meta = (MetaAgent)routingElement.getValue();
-                    if(meta.userName.equals(message.getReceiver()))
-                    {
-                        break;
-                    }
-                    
-                }*/
-                
-                routingTable.get(message.getReceiver()).queue.put(message);
-                
-            }catch(InterruptedException ie)
-            {
-                System.out.println("Error!");
+            System.out.println("Message direct to portal: " + message.toString());
+        }
+        else if(routingTable.containsKey(message.getReceiver()))
+        {
+            try {
+                routingTable.get(message.getReceiver()).put(message);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Portal.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else
         {
-            try
-            {
-                userRouter.queue.put(message);
-            }catch(InterruptedException ie)
-            {
-                System.out.println("Error!");
-            }
+            System.out.println("Portal: No idea who this is for!");
         }
     }
     
-        public synchronized void updateTable(String name ,MetaAgent p)
+    public void addAgent(MetaAgent agent)
+    {
+        routingTable.put(agent.userName, agent);
+        
+        // if this.portal != null notify that portal
+    }
+    
+    public void updateTable(String name ,MetaAgent p)
+    {
+        if(!this.routingTable.containsKey(name))
         {
-            if(!this.routingTable.containsKey(name))
-            {
-                System.out.println("Entered Portal UpdateTable");
-                routingTable.put(name, p);
-            }
+            System.out.println("Entered Portal UpdateTable");
+            routingTable.put(name, p);
         }
+    }
 }

@@ -8,6 +8,7 @@ package mas;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -16,12 +17,11 @@ import java.util.Map;
  */
 public class Router extends MetaAgent
 {
-    public volatile HashMap<String, MetaAgent> routing = new HashMap();
+    public volatile TreeMap<String, MetaAgent> routing = new TreeMap();
     
     public Router(String userName)
     {
-        
-        super(userName);
+        super(userName, null);
         
     }
     
@@ -33,14 +33,9 @@ public class Router extends MetaAgent
     
     public synchronized void synchroniseUpdate(String userAgentName)
     {
-        Iterator mapRouting = routing.entrySet().iterator();
-        
-        while(mapRouting.hasNext())
+        for(Map.Entry<String, MetaAgent> mapRouting : routing.entrySet())
         {
-            System.out.println("Entered Routing While");
-            Map.Entry routingElement = (Map.Entry)mapRouting.next();
-            Portal p = (Portal)routingElement.getValue();
-            System.out.println(p.userName);
+            Portal p = (Portal)routing.get(userAgentName);
             p.updateTable(userAgentName, this);
         }
     }
@@ -53,7 +48,7 @@ public class Router extends MetaAgent
             try
             {
                 System.out.println("Passed though router");
-                routing.get(message.getReceiver()).queue.put(message);
+                routing.get(message.getReceiver()).put(message);
             }catch(InterruptedException ie)
             {
                 System.out.println("Error!");
