@@ -36,6 +36,8 @@ public class Message
     {
         return sender;
     }
+    
+    @Override
     public String toString()
     {
         return "Message from: " + sender + "\nMessage: " + messageBody + "\nTo: " + receiver;

@@ -6,7 +6,9 @@
 package mas;
 
 import java.util.HashMap;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,43 +16,64 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class Portal extends MetaAgent
 {
+    public volatile TreeMap<String, MetaAgent> routingTable; 
+    //private Router userRouter;
     
-    public HashMap<String, MetaAgent> routingTable; 
-    private Router userRouter;
+    public Portal(String userName)
+    {
+        super(userName, null);
+        this.routingTable = new TreeMap<>();
+        //this.userRouter = router;
+    }
     
     public Portal( String userName, Router router)
     {
-        super(userName);
-        this.routingTable = new HashMap();
-        this.userRouter = router;
+        super(userName, null);
+        this.routingTable = new TreeMap<>();
+        //this.userRouter = router;
+    }
+    
+    public void setPortal(Portal portal)
+    {
+        this.portal = portal;
     }
     
     @Override
     public void messageHandler(Message message)
     {
-        if(routingTable.containsKey(message.getReceiver()))
+        System.out.println("Portal Contains Key: " + routingTable.containsKey(message.getReceiver()));
+        
+        if(message.getReceiver().equals(this.userName))
         {
-            try
-            {
-                routingTable.get(message.getReceiver()).queue.put(message);
-            }catch(InterruptedException ie)
-            {
-                System.out.println("Error!");
+            System.out.println("Message direct to portal: " + message.toString());
+        }
+        else if(routingTable.containsKey(message.getReceiver()))
+        {
+            try {
+                routingTable.get(message.getReceiver()).put(message);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Portal.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else
         {
-            System.out.println("Message receiver doesn't exist!");
+            System.out.println("Portal: No idea who this is for!");
         }
+    }
+    
+    public void addAgent(MetaAgent agent)
+    {
+        routingTable.put(agent.userName, agent);
+        
+        // if this.portal != null notify that portal
     }
     
     public void updateTable(String name ,MetaAgent p)
     {
-        
-        if(!(this.routingTable.containsKey(name)))
+        if(!this.routingTable.containsKey(name))
         {
-            routingTable.put(p.userName, p);
-            
+            System.out.println("Entered Portal UpdateTable");
+            routingTable.put(name, p);
         }
     }
 }

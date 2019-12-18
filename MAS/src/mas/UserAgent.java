@@ -5,23 +5,17 @@
  */
 package mas;
 
-import java.util.concurrent.ArrayBlockingQueue;
-
 /**
  *
  * @author t7091808
  */
 public class UserAgent extends MetaAgent
 {
-    protected Portal userPortal;
-
     public UserAgent(String userName, Portal userPortal) 
     {
-        super(userName);
-        this.userPortal = userPortal;
+        super(userName, userPortal);
     }
-
-   
+    
     @Override
     public void messageHandler(Message message)
     {
@@ -29,15 +23,10 @@ public class UserAgent extends MetaAgent
         {
             System.out.println(message.toString());
         }
-        else
-        {
-            try
-            {
-                this.userPortal.queue.put(message);
-            }catch(InterruptedException ie)
-            {
-                System.out.println("Error!");
-            }
-        }
+    }
+    
+    public void SendMessage(Message message)
+    {
+        portal.add(message);
     }
 }

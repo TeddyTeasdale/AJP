@@ -8,7 +8,7 @@ package mas;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.TreeMap;
 
 
 /**
@@ -17,37 +17,46 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 public class Router extends MetaAgent
 {
-    HashMap<String, MetaAgent> routing = new HashMap();
+    public volatile TreeMap<String, MetaAgent> routing = new TreeMap();
     
     public Router(String userName)
     {
-        
-        super(userName);
+        super(userName, null);
         
     }
     
-    public void updateTable(String userAgentName, MetaAgent portal)
+    public synchronized void updateTable(String userAgentName, MetaAgent portal)
     {
         routing.put(userAgentName, portal);
         synchroniseUpdate(userAgentName);
     }
     
-    public void synchroniseUpdate(String userAgentName)
+    public synchronized void synchroniseUpdate(String userAgentName)
     {
-        Iterator mapRouting = routing.entrySet().iterator();
-        
-        while(mapRouting.hasNext())
+        for(Map.Entry<String, MetaAgent> mapRouting : routing.entrySet())
         {
-           
-            Map.Entry routingElement = (Map.Entry)mapRouting.next();
-            Portal p = (Portal)routingElement.getValue();
+            Portal p = (Portal)routing.get(userAgentName);
             p.updateTable(userAgentName, this);
         }
     }
 
     @Override
-    public void messageHandler(Message message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void messageHandler(Message message) 
+    {
+        if(routing.containsKey(message.getReceiver()))
+        {
+            try
+            {
+                System.out.println("Passed though router");
+                routing.get(message.getReceiver()).put(message);
+            }catch(InterruptedException ie)
+            {
+                System.out.println("Error!");
+            }
+        }
+        else
+        {
+            System.out.println("Router: Message receiver doesn't exist!");
+        }
     }
-    
 }

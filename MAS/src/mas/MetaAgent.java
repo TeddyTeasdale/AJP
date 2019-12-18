@@ -6,52 +6,49 @@
 package mas;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author t7091808
  */
-public abstract class MetaAgent
+public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements Runnable
 {
     protected String userName;
+    protected Portal portal;
     
-    protected ArrayBlockingQueue queue;
     private Thread t;
     private boolean exit;
 
-    public MetaAgent(String userName) 
+    public MetaAgent(String userName, Portal portal) 
     {
+        super(100);
+        
         this.userName = userName;
-        this.queue = new ArrayBlockingQueue(10);
+        this.portal = portal;
+        
         this.exit = false;
         startThread();
-        
     }
 
-    
-    
-
-    public void startThread() 
+    private void startThread() 
     {
-        Thread t = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                while(!exit)
-                {
-                    try
-                    {
-                        messageHandler((Message)queue.take());
-                    }catch(InterruptedException ie)
-                    {
-                        System.out.println("Error! ");
-                    }
-                   
-                }
-            }  
-        });
+        t = new Thread(this);
         t.start();
+    }
+    
+    @Override
+    public void run()
+    {
+        while(!exit)
+        {
+            try {
+                messageHandler(this.take());
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MetaAgent.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     public void stop()
@@ -59,7 +56,9 @@ public abstract class MetaAgent
         exit = true;
     }
     
-    public abstract void messageHandler(Message message);
-    
+    public void messageHandler(Message message)
+    {
+        System.out.println(message.getMessageBody());
+    }
     
 }
