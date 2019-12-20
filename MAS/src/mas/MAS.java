@@ -30,16 +30,16 @@ public class MAS
 //        router.updateTable(user1.userName, portal2);
 //        portal1.updateTable(user2.userName, user2);
 //        router.updateTable(user2.userName, portal2);
-////        portal1.updateTable(user3.userName, user3);
-////        portal1.updateTable(user4.userName, user4);
+//        portal1.updateTable(user3.userName, user3);
+//        portal1.updateTable(user4.userName, user4);
 //        
 //        
 //        portal2.updateTable(user3.userName, user3);
 //        router.updateTable(user3.userName, portal1);
 //        portal2.updateTable(user4.userName, user4);
 //        router.updateTable(user4.userName, portal1);
-////        portal2.updateTable(user1.userName, user1);
-////        portal2.updateTable(user2.userName, user2);
+//        portal2.updateTable(user1.userName, user1);
+//        portal2.updateTable(user2.userName, user2);
 //        
 //        
 //        System.out.println(router.routing.containsKey(user1.userName));
@@ -69,19 +69,20 @@ public class MAS
 //        Message msg4 = new Message("User2", "appropriate message", "User3");
 //        Message msg5 = new Message("User2", "appropriate message", "User4");
 //        Message msg6 = new Message("User1", "appropriate message", "User3");
-        //Message msg7 = new Message("User1", "appropriate message", "User4");
+//        Message msg7 = new Message("User1", "appropriate message", "User4");
 //        user1.messageHandler(msg);
 //        user1.messageHandler(msg1);
 //        user2.messageHandler(msg2);
 //        user2.messageHandler(msg3);
-////      user3.messageHandler(msg4);
-//  //    user4.messageHandler(msg5);
-//   //   user3.messageHandler(msg6);
+//      user3.messageHandler(msg4);
+//      user4.messageHandler(msg5);
+//      user3.messageHandler(msg6);
          //user4.messageHandler(msg7);
         
         //System.out.println(router.routing.toString());
         //user1.
         
+        //Sending a message ebtween two agents on the same Portal.
         Portal portal1 = new Portal("p1");
         UserAgent agent1 = new UserAgent("a1", portal1);
         portal1.addAgent(agent1);
@@ -91,14 +92,21 @@ public class MAS
         
         agent1.SendMessage(new Message("a2", "Hi!", "agent1"));
         
+        //------------------------------------------------------------
+        //Sending a message between two agents on different portals.
+        Portal portal2 = new Portal("p2", portal1);
+        UserAgent agent3 = new UserAgent("a3", portal2);
         
-        for (int i = 0; i<10; i++)
+        portal2.addAgent(agent3);
+        
+        portal1.setPortal(portal2);
+        
+        agent2.SendMessage(new Message("a3", "Hello agent3!", "a2"));
+        
+        /*for (int i = 0; i<10; i++)
         {
             agent2.SendMessage(new Message("a1", "Hi " + i + " times!", "gdgdgfdfg"));
             Thread.sleep(1000);
-        }
-        
-        
+        }*/
     }
-    
 }

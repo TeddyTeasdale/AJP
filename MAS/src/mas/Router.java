@@ -35,6 +35,7 @@ public class Router extends MetaAgent
     {
         for(Map.Entry<String, MetaAgent> mapRouting : routing.entrySet())
         {
+            //mapRouting.getValue().portal.updateTable(userName, this);
             Portal p = (Portal)routing.get(userAgentName);
             p.updateTable(userAgentName, this);
         }
