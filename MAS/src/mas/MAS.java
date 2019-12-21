@@ -5,6 +5,8 @@
  */
 package mas;
 
+import java.util.Map;
+
 /**
  *
  * @author t7091808
@@ -90,10 +92,11 @@ public class MAS
         UserAgent agent2 = new UserAgent("a2", portal1);
         portal1.addAgent(agent2);
         
-        agent1.SendMessage(new Message("a2", "Hi!", "agent1"));
+//        agent1.SendMessage(new Message("a2", "Hi!", "agent1"));
         
         //------------------------------------------------------------
         //Sending a message between two agents on different portals.
+        
         Portal portal2 = new Portal("p2", portal1);
         UserAgent agent3 = new UserAgent("a3", portal2);
         
@@ -101,7 +104,23 @@ public class MAS
         
         portal1.setPortal(portal2);
         
+        System.out.println("Sending from a2 to a3");
         agent2.SendMessage(new Message("a3", "Hello agent3!", "a2"));
+        
+        agent3.SendMessage(new Message("a2", "Hello agent2", "a3"));
+        
+        
+        for(Map.Entry<String, MetaAgent> mapRouting : portal1.routingTable.entrySet())
+        {
+            System.out.println("Portal 1 Key: " + mapRouting.getKey());
+            System.out.println("Portal 1 Value: " + mapRouting.getValue().userName);
+        }
+        
+        for(Map.Entry<String, MetaAgent> mapRouting : portal2.routingTable.entrySet())
+        {
+            System.out.println("Portal 2 Key: " + mapRouting.getKey());
+            System.out.println("Portal 2 Value: " + mapRouting.getValue().userName);
+        }
         
         /*for (int i = 0; i<10; i++)
         {
