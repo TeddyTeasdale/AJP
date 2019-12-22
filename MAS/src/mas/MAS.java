@@ -94,15 +94,13 @@ public class MAS
         
 //        agent1.SendMessage(new Message("a2", "Hi!", "agent1"));
         
-        //------------------------------------------------------------
+        //----------------------------------------------------------------------------------
         //Sending a message between two agents on different portals.
         
         Portal portal2 = new Portal("p2", portal1);
         UserAgent agent3 = new UserAgent("a3", portal2);
         
         portal2.addAgent(agent3);
-        
-        portal1.setPortal(portal2);
         
         System.out.println("Sending from a2 to a3");
         agent2.SendMessage(new Message("a3", "Hello agent3!", "a2"));
@@ -122,10 +120,66 @@ public class MAS
             System.out.println("Portal 2 Value: " + mapRouting.getValue().userName);
         }
         
-        /*for (int i = 0; i<10; i++)
+        Router router1 = new Router("r1");
+        
+        router1.connectRouter();
+        
+        System.out.println("Listing p1 and p2 router connections...");
+        
+        for(Portal pList : router1.portalList)
         {
-            agent2.SendMessage(new Message("a1", "Hi " + i + " times!", "gdgdgfdfg"));
-            Thread.sleep(1000);
-        }*/
+            System.out.println(pList.getRouter().userName);
+        }
+        
+        System.out.println("Listing the Router's Portal connections for each user agent");
+        System.out.println(router1.routing.isEmpty());
+        for(Map.Entry<String, MetaAgent> mapRouting : router1.routing.entrySet())
+        {
+            System.out.println("Router1's key: " + mapRouting.getKey() + " ----------- Value: " + mapRouting.getValue().userName);
+        }
+        System.out.println("Portal1's connected Portal: " + portal1.portal.userName);
+        System.out.println("Portal 1 routingTable should now point to r1 not p2");
+        for(Map.Entry<String, MetaAgent> mapRouting : portal1.routingTable.entrySet())
+        {
+            System.out.println("Portal 1 Key: " + mapRouting.getKey());
+            System.out.println("Portal 1 Value: " + mapRouting.getValue().userName);
+        }
+        
+        /*agent2.SendMessage(new Message("a3", "Hello from over the Router", "a2"));
+        agent3.SendMessage(new Message("a2", "Nice to hear from you over the Router", "a3"));*/
+        
+        //-----------------------------------------------------------------------------
+        Portal portal3 = new Portal("p3", router1);
+        
+        for(Map.Entry<String, MetaAgent> mapRouting : portal3.routingTable.entrySet())
+        {
+            System.out.println("Portal 3 Key: " + mapRouting.getKey() + " ----------- Value: " + mapRouting.getValue().userName);
+        }
+        
+        UserAgent agent4 = new UserAgent("a4", portal3);
+        
+        portal3.addAgent(agent4);
+        
+        //Test here for each Portal and Router having their routing table updated with new reference.
+        //Router 1: a4 = p3, Portal 1 and 2: a4 = r1, Portal 3: a4 = a4.
+        for(Map.Entry<String, MetaAgent> mapRouting : portal1.routingTable.entrySet())
+        {
+            System.out.println("Portal 1 Key: " + mapRouting.getKey() + " ----------- Value: " + mapRouting.getValue().userName);
+        }
+        
+        for(Map.Entry<String, MetaAgent> mapRouting : portal2.routingTable.entrySet())
+        {
+            System.out.println("Portal 2 Key: " + mapRouting.getKey() + " ----------- Value: " + mapRouting.getValue().userName);
+        }
+        
+        for(Map.Entry<String, MetaAgent> mapRouting : portal3.routingTable.entrySet())
+        {
+            System.out.println("Portal 3 Key: " + mapRouting.getKey() + " ----------- Value: " + mapRouting.getValue().userName);
+        }
+        
+        for(Map.Entry<String, MetaAgent> mapRouting : router1.routing.entrySet())
+        {
+            System.out.println("Router 1 Key: " + mapRouting.getKey() + " ----------- Value: " + mapRouting.getValue().userName);
+        }
     }
 }

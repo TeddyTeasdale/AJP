@@ -5,8 +5,6 @@
  */
 package mas;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,22 +20,35 @@ public class Router extends MetaAgent
     public Router(String userName)
     {
         super(userName, null);
-        
     }
     
-    public synchronized void updateTable(String userAgentName, MetaAgent portal)
+    public void connectRouter()
     {
-        routing.put(userAgentName, portal);
-        synchroniseUpdate(userAgentName);
-    }
-    
-    public synchronized void synchroniseUpdate(String userAgentName)
-    {
-        for(Map.Entry<String, MetaAgent> mapRouting : routing.entrySet())
+        if(!portalList.isEmpty())
         {
-            //mapRouting.getValue().portal.updateTable(userName, this);
-            Portal p = (Portal)routing.get(userAgentName);
-            p.updateTable(userAgentName, this);
+            for(Portal pList : portalList)
+            {
+                pList.setRouter(this);
+                
+                for(Map.Entry<String, MetaAgent> mapRouting : pList.routingTable.entrySet())
+                {
+                    String name = mapRouting.getKey();
+                    MetaAgent portalValue = mapRouting.getValue();
+                    
+                    if(!routing.containsKey(name))
+                    {
+                        if(portalValue.equals(pList.portal)) //update Router routing with username and portal reference
+                            routing.put(name, pList.portal);
+                        else
+                            routing.put(name, portalValue.portal);
+                    }
+                    
+                    //System.out.println(name + " " + portalValue.userName);
+                    //System.out.println(portalValue.equals(pList.portal));
+                    if(portalValue.equals(pList.portal))
+                        pList.routingTable.replace(name, this);
+                }
+            }
         }
     }
 
@@ -48,7 +59,7 @@ public class Router extends MetaAgent
         {
             try
             {
-                System.out.println("Passed though router");
+                System.out.println("Router " + this.userName + ": Passed though router");
                 routing.get(message.getReceiver()).put(message);
             }catch(InterruptedException ie)
             {
@@ -56,8 +67,6 @@ public class Router extends MetaAgent
             }
         }
         else
-        {
-            System.out.println("Router: Message receiver doesn't exist!");
-        }
+            System.out.println("Router " + this.userName + ": Message receiver doesn't exist!");
     }
 }

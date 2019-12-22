@@ -5,8 +5,6 @@
  */
 package mas;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
@@ -19,7 +17,6 @@ import java.util.logging.Logger;
 public class Portal extends MetaAgent
 {
     public volatile TreeMap<String, MetaAgent> routingTable;
-    ArrayList<Portal> portalMap = new ArrayList<>();
     
     private Router portalRouter;
     
@@ -27,7 +24,7 @@ public class Portal extends MetaAgent
     public Portal(String userName)
     {
         super(userName, null);
-        this.routingTable = new TreeMap<String, MetaAgent>();
+        this.routingTable = new TreeMap<>();
         this.portalRouter = null;
     }
     
@@ -35,48 +32,92 @@ public class Portal extends MetaAgent
     public Portal(String userName, Portal portal)
     {
         super(userName, portal);
-        this.routingTable = new TreeMap<String, MetaAgent>();
+        this.routingTable = new TreeMap<>();
         this.portalRouter = null;
-        synchAgents();
+        synchronise();
     }
     
     //Portal to Router communication
     public Portal(String userName, Router router)
     {
         super(userName, null);
-        this.routingTable = new TreeMap<String, MetaAgent>();
+        this.routingTable = new TreeMap<>();
+        this.portalRouter = router;
+        synchronise();
+    }
+    
+    public boolean setPortal(Portal portal)
+    {
+        this.portal = portal;
+        return true;
+    }
+    
+    public void setRouter(Router router)
+    {
         this.portalRouter = router;
     }
     
-    public void setPortal(Portal portal)
+     public Router getRouter()
     {
-        this.portal = portal;
+        return portalRouter;
     }
     
     public void addAgent(MetaAgent agent)
     {
         routingTable.put(agent.userName, agent);
         System.out.println("add");
-        if(this.portal != null)
+        
+        if(portalRouter != null) //If the network has an existing Router, update it.
         {
+            //Updates router
+            portalRouter.routing.put(agent.userName, this);
+            
+            //Update all other Portals here...
+            for(Portal pList : portalList)
+            {
+                if(pList.equals(this))
+                    this.routingTable.put(agent.userName, agent);
+                else
+                    pList.routingTable.put(agent.userName, portalRouter);
+            }
+        }
+        else if(this.portal != null) //If the network has no Router but a connected Portal.
+        {
+            //Updates connected Portal's routing table.
             portal.routingTable.put(agent.userName, this);
             System.out.println("Adding agent");
         }
         // if this.portal != null notify that portal
     }
     
-    private void synchAgents()
+    private void synchronise() //Only called when there is more than 1 Portal.
     {
-        if(this.portal != null)
+        if(this.portal != null) //Null Pointer Exception occurs without this when adding a third Portal when a Router exists.
+        {
+            if(this.portal.portalRouter == null && this.portal.portal == null)
+                this.portal.portal = this; //Connects original Portal to newly created Portal.
+        }
+        
+        if(this.portalRouter != null) //Update newly added Portal with connection to router to find other UserAgents.
+        {                             // Only works for Portals added without any current UserAgents.
+            for(Map.Entry<String, MetaAgent> mapRouting : portalRouter.routing.entrySet())
+            {
+                this.routingTable.put(mapRouting.getKey(), portalRouter);
+                /*pList.routingTable.put(name, this);
+                portalRouter.routing.put(name, this);*/
+            }
+        }
+        else if(this.portal != null) //Only update connected Portal
         {
             for(Map.Entry<String, MetaAgent> mapRouting : portal.routingTable.entrySet())
             {
-                String name = mapRouting.getKey();
-                
-                if(!routingTable.containsKey(name))
+                /*for(Portal pList : portalList)
                 {
-                    routingTable.put(name, this.portal);
-                }
+                    pList.routingTable.put(agent.userName, this);
+                }*/
+
+                if(!routingTable.containsKey(mapRouting.getKey()))
+                    routingTable.put(mapRouting.getKey(), this.portal);
             }
         }
     }
@@ -102,17 +143,6 @@ public class Portal extends MetaAgent
             }
         }
         else
-        {
             System.out.println("Portal: " + this.userName + " - No idea who this is for!");
-        }
-    }
-    
-    public void updateTable(String name ,MetaAgent p)
-    {
-        if(!this.routingTable.containsKey(name))
-        {
-            System.out.println("Entered Portal UpdateTable");
-            routingTable.put(name, p);
-        }
     }
 }
