@@ -5,37 +5,39 @@
  */
 package mas;
 
+import java.io.Serializable;
+
 /**
  *
  * @author t7091808
  */
-public class Message 
+public class Message
 {
     private final static long serialVersionUID = 1L;
-    private final String receiver; //Will be UserAgent with GUI
-    private final String messageBody;
-    private final String sender;
+    private final String RECEIVER; //Will be UserAgent with GUI
+    private final String MESSAGEBODY;
+    private final String SENDER;
     
     Message(String receiver, String messageBody, String sender)
     {
-        this.receiver = receiver;
-        this.messageBody = messageBody;
-        this.sender = sender;
+        this.RECEIVER = receiver;
+        this.MESSAGEBODY = messageBody;
+        this.SENDER = sender;
     }
 
     public String getReceiver()
     {
-        return receiver;
+        return RECEIVER;
     }
 
     public String getMessageBody()
     {
-        return messageBody;
+        return MESSAGEBODY;
     }
 
     public String getSender()
     {
-        return sender;
+        return SENDER;
     }
     
     public long getSerialVersionUID()
@@ -46,7 +48,7 @@ public class Message
     @Override
     public String toString()
     {
-        return "Message from: " + sender + "\nMessage: " + messageBody + "\nTo: " + receiver;
+        return "Message from: " + SENDER + "\nMessage: " + MESSAGEBODY + "\nTo: " + RECEIVER;
     }
     
 }

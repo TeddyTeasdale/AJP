@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements Runnable, Serializable
 {
     protected String userName;
-    static ArrayList<Portal> portalList = new ArrayList<>();
+    volatile static ArrayList<Portal> portalList = new ArrayList<>();
     protected Portal portal;
     
     private Thread t;

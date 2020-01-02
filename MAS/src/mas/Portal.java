@@ -48,16 +48,28 @@ public class Portal extends MetaAgent
     
     public boolean setPortal(Portal portal)
     {
-        this.portal = portal;
-        return true;
+        if(portal != null)
+        {
+            this.portal = portal;
+            return true;
+        }
+        
+        return false;
+        
     }
     
-    public void setRouter(Router router)
+    public boolean setRouter(Router router)
     {
-        this.portalRouter = router;
+        if(router != null)
+        {
+            this.portalRouter = router;
+            return true;
+        }
+        
+        return false;
     }
     
-     public Router getRouter()
+    public Router getRouter()
     {
         return portalRouter;
     }
