@@ -20,9 +20,7 @@ public class UserAgent extends MetaAgent
     public void messageHandler(Message message)
     {
         if(message.getReceiver().equals(this.userName))
-        {
             System.out.println(message.toString());
-        }
     }
     
     public void SendMessage(Message message)

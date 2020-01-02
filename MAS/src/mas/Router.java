@@ -15,7 +15,7 @@ import java.util.TreeMap;
  */
 public class Router extends MetaAgent
 {
-    public volatile TreeMap<String, MetaAgent> routing = new TreeMap();
+    protected volatile TreeMap<String, MetaAgent> routing = new TreeMap();
     
     public Router(String userName)
     {

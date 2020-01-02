@@ -5,6 +5,7 @@
  */
 package mas;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @author t7091808
  */
-public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements Runnable
+public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements Runnable, Serializable
 {
     protected String userName;
     static ArrayList<Portal> portalList = new ArrayList<>();

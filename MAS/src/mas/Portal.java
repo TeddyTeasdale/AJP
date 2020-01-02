@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class Portal extends MetaAgent
 {
-    public volatile TreeMap<String, MetaAgent> routingTable;
+    protected volatile TreeMap<String, MetaAgent> routingTable;
     
     private Router portalRouter;
     

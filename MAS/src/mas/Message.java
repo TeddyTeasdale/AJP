@@ -11,6 +11,7 @@ package mas;
  */
 public class Message 
 {
+    private final static long serialVersionUID = 1L;
     private final String receiver; //Will be UserAgent with GUI
     private final String messageBody;
     private final String sender;
@@ -35,6 +36,11 @@ public class Message
     public String getSender()
     {
         return sender;
+    }
+    
+    public long getSerialVersionUID()
+    {
+        return this.serialVersionUID;
     }
     
     @Override
