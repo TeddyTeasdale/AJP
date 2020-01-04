@@ -17,12 +17,25 @@ public class Message
     private final String RECEIVER; //Will be UserAgent with GUI
     private final String MESSAGEBODY;
     private final String SENDER;
+    private final MetaAgent NEWUSER;
+    private final MessageType MESSAGETYPE;
     
-    Message(String receiver, String messageBody, String sender)
+    Message(String receiver, String messageBody, String sender, MessageType messageType)
     {
         this.RECEIVER = receiver;
         this.MESSAGEBODY = messageBody;
         this.SENDER = sender;
+        this.NEWUSER = null;
+        this.MESSAGETYPE = messageType;
+    }
+    
+    Message(String receiver, MetaAgent newUser, MessageType messageType)
+    {
+        this.RECEIVER = receiver;
+        this.MESSAGEBODY = null;
+        this.SENDER = "System";
+        this.NEWUSER = newUser;
+        this.MESSAGETYPE = messageType;
     }
 
     public String getReceiver()
@@ -45,10 +58,23 @@ public class Message
         return this.serialVersionUID;
     }
     
+    public MetaAgent getNewUser()
+    {
+        return NEWUSER;
+    }
+    
+    public MessageType getMessageType()
+    {
+        return MESSAGETYPE;
+    }
+    
     @Override
     public String toString()
     {
-        return "Message from: " + SENDER + "\nMessage: " + MESSAGEBODY + "\nTo: " + RECEIVER;
+        if(MESSAGETYPE.equals(MESSAGETYPE.USERMESSAGE))
+            return "Message from: " + SENDER + "\nMessage: " + MESSAGEBODY + "\nTo: " + RECEIVER;
+        else
+            return "Message from: " + SENDER + "\nMessage: Adding " + NEWUSER.userName + " to Portal " + NEWUSER.portal.userName + "\nTo: All connected Portals and Routers (RoutingTables should be updated)";
     }
     
 }
