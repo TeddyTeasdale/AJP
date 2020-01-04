@@ -22,6 +22,9 @@ public class Message
     
     Message(String receiver, String messageBody, String sender, MessageType messageType)
     {
+        if(messageType.equals(messageType.USERMESSAGE) || receiver.equals("") || receiver == null || messageBody == null || sender == null)
+            throw new IllegalArgumentException();
+        
         this.RECEIVER = receiver;
         this.MESSAGEBODY = messageBody;
         this.SENDER = sender;
@@ -31,6 +34,9 @@ public class Message
     
     Message(String receiver, MetaAgent newUser, MessageType messageType)
     {
+        if(messageType.equals(messageType.SYSTEMMESSAGE) || receiver.equals("") || receiver == null)
+            throw new IllegalArgumentException();
+        
         this.RECEIVER = receiver;
         this.MESSAGEBODY = null;
         this.SENDER = "System";
