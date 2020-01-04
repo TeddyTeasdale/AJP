@@ -55,7 +55,6 @@ public class Portal extends MetaAgent
         }
         
         return false;
-        
     }
     
     public boolean setRouter(Router router)
